@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+
+{% extends "base_framework.html" %}
+
+<head>
+	<title>
+	</title>
+</head>
+
+<body>
+	<br><br>
+	{% block main_body_content %}
+		<form action="" method="post">
+		{% if sim_state >= 1 %}
+			<input type="submit" name="edit_sim_param" value="Edit Simulation Parameters"> <br>
+			<p>Click above to change the simulation parameters.</p>
+		{% endif %}
+		
+		{% if sim_state == 1 %}
+			<p>A simulation needs at least one circuit spreadsheet. Click on the "Edit Simulation Parameters" button above to confirm the
+			working directory and continue to add circuit schematic spreadsheets.</p>
+		{% endif %}
+		
+		{% if sim_state >= 2 %}
+			<input type="submit" name="add_ckt_schematic" value="Add circuit file"> <br>
+			<p>Click above to add or remove circuit schematics.</p>
+		{% endif %}
+		
+		{% if error_codes %}
+			<p style="color:red">There are errors in the simulation configuration.</p>
+			<ol>
+			{% for error_item in error_codes %}
+					{% if error_item == 1 %}
+						<li style="color:red">Some circuit schematic spreadsheets are not in the working directory or could not be read. Make
+						sure all circuit files are in the working directory.</li>
+					{% endif %}
+			{% endfor %}
+			</ol> <br><br>
+		{% endif %}
+		
+		{% if sim_state == 2 %}
+			<p>After adding circuit schematic spreadsheets, the simulator will check them to ensure there are no errors. To do so, click on the
+			"Add circuit file" button above and in the circuit addition page, click on "Process circuit schematics". A simulation needs at least
+			one circuit spreadsheet. Click on the "Edit Simulation Parameters" button above to confirm the working directory and continue to
+			add circuit schematic spreadsheets.</p>
+		{% endif %}
+
+		{% if sim_state >= 3 %}
+			<input type="submit" name="edit_ckt_parameters" value="Edit circuit parameters"> <br>
+			<p>Click above to edit the parameters of the components in the circuit uploaded.</p>
+		{% endif %}
+
+		{% if sim_state == 3 %}
+			<p>After performing an initial processing of the circuit spreadsheets that have been uploaded, you are now ready to edit the
+			parameters of the components in the circuit. It is advisable to browse through the parameters by clicking on "Edit parameters"
+			button if any change	is made in the circuits.</p>
+		{% endif %}
+
+		{% if sim_state >= 4 %}
+			<input type="submit" name="edit_control" value="Edit control"> <br>
+			<p>The "Edit control" button is optional and only if there are any control files
+			in the simulation.</p>
+			<input type="submit" name="view_output" value="View output"> <br>
+			<p>Click above to run the simulation and view output plots.</p>
+		{% endif %}
+
+		{% if sim_state == 4 %}
+			<p>Clicking the above button will take you to the page where the simulation can
+			be executed and output plots can be configured and viewed.</p>
+		{% endif %}
+
+		<input type="hidden" name="sim_id" value="{{ sim_id }}">
+		<input type="hidden" name="sim_state" value="{{ sim_state }}">
+		{% csrf_token %}
+		</form>
+	{% endblock %}
+</body>

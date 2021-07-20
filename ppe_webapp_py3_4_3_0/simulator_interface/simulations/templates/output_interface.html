@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+{% extends "base_framework.html" %}
+{% load staticfiles %}
+
+<head>
+	<title>
+	</title>
+</head>
+
+<body>
+	<br><br>
+	{% block main_body_content %}
+		{% if ckt_error_list %}
+			<p>The following errors have been found in the simulation. Go back to the previous
+			page and click on the "Edit Simulation", "Add circuits" and "Edit parameters" buttons
+			to make corrections.
+			</p>
+			<ol>
+			{% for ckt_error_item in ckt_error_list %}
+				<li>{{ ckt_error_item }}</li>
+			{% endfor %}
+			</ol>
+		{% else %}
+			<p>Read the instructions below for more information.</p>
+			{% if run_state == 0 %}
+				<p>The simulation is ready, click on the Run button to start it.</p>
+			{% endif %}
+
+			{% if run_state == 1 %}
+				<p>The simulation is running. If you want to restart it, click on the Stop button
+				to stop the simulation and then click on Run.</p>
+			{% endif %}
+
+			{% if run_state == 2 %}
+				<p>The simulation has been stopped. If you want to restart it, click on the Run
+				button.</p>
+			{% endif %}
+
+			{% if run_state == 0 or run_state == 2 %}
+				<a href="/run-simulation-page/{{ sim_id }}/">
+						<button type="button"
+										class="btn btn-success">Run</button></a>
+			{% endif %}
+			{% if run_state == 1 %}
+				<a href="/stop-simulation-page/{{ sim_id }}/">
+						<button type="button"
+										class="btn btn-danger">Stop</button></a>
+			{% endif %}
+		{% endif %}
+
+		<br><br>
+
+		<p>Use the time fields next to each plot to zoom a plot.</p>
+		<p>If the time range is invalid, the entire data file will be plotted.</p>
+
+		<p>Click on the "Add plot" button below to create a new plot.</p>
+		<a href="/add-plot/{{ sim_id }}/">
+				<button type="button"
+								class="btn btn-primary">Add plot</button></a> <br>
+
+		{% if form_type == 1 %}
+			{% if form %}
+				<br><br>
+				<form action="" method="post">
+					{% for control_item in form %}
+						<div class="form-group">
+							<div class="row">
+								<div class="col-md-4 col-align-right">
+									<label class="control-label">{{ control_item.label }}:</label>
+								</div>
+								<div class="col-md-4">
+									<div class="form-field">
+										{{ control_item }}
+									</div>
+								</div>
+							</div>
+						</div>
+					{% endfor %}
+					{% csrf_token %}
+					<div class="row">
+						<div class="col-md-offset-4">
+							<input type="submit" class="btn btn-primary" value="Start plot">
+						</div>
+					</div>
+				</form>
+			{% endif %}
+		{% endif %}
+
+		{% if new_plot %}
+			<br><br>
+			<div class="row">
+				<div class="col-md-offset-4">
+					<b>Plot title:</b> {{ new_plot.plot_title }} <br>
+					{% for waveform in new_plot.circuitwaveforms_set.all %}
+						{% for waveform_plot in waveform.waveform.all %}
+							{{ waveform_plot.line_name }} -> {{ waveform.waveform_legend }} <br>
+						{% endfor %}
+					{% endfor %}
+				</div>
+			</div>
+		{% endif %}
+		<br>
+		{% if form_type == 2 %}
+			{% if form %}
+				<form action="" method="post">
+					{% for control_item in form %}
+						<div class="form-group">
+							<div class="row">
+								<div class="col-md-4 col-align-right">
+									<label class="control-label">{{ control_item.label }}:</label>
+								</div>
+								<div class="col-md-4">
+									<div class="form-field">
+										{{ control_item }}
+									</div>
+								</div>
+							</div>
+						</div>
+					{% endfor %}
+					<div class="row">
+						<div class="col-md-4 col-align-right">
+							<b>Waveform source:</b>
+						</div>
+						<div class="col-md-4">
+							<select name="waveform_source" class="form-control">
+								{% for plotline_item in plotlines_list %}
+									<option value="{{ plotline_item.line_name }}">{{ plotline_item.line_name }}</option>
+								{% endfor %}
+							</select>
+						</div>
+					</div>
+					{% csrf_token %}
+					<br>
+					<div class="row">
+						<div class="col-md-offset-4">
+							<input type="submit" class="btn btn-primary" value="Save waveform">
+						</div>
+					</div>
+				</form>
+				<br>
+				<div class="row">
+					<div class="col-md-offset-4">
+						<a href="/save-plot/{{ sim_id }}/">
+								<button type="button"
+												class="btn btn-success">Done</button></a>
+								Click this once all waveforms are added.
+					</div>
+				</div>
+				<br><br>
+			{% endif %}
+		{% endif %}
+
+		{% if plot_list %}
+				{% for plot_item in plot_list %}
+					{% if plot_item.id != new_plot_id %}
+						<br> <br>
+						<form action="/generate-plot/{{ sim_id }}/{{ plot_item.id }}/" method="post">
+							<div class="row">
+								<div class="col-md-1">
+									{{ forloop.counter }}.
+								</div>
+								<div class="col-md-3">
+									<b>Plot title: </b>{{ plot_item.plot_title }} <br>
+									{% for waveform in plot_item.circuitwaveforms_set.all %}
+										{% for waveform_plot in waveform.waveform.all %}
+											{{ waveform_plot.line_name }} -> {{ waveform.waveform_legend }} <br>
+										{% endfor %}
+									{% endfor %}
+								</div>
+								<div class="col-md-3">
+									<div class="row text-center">
+										X-Zoom
+									</div>
+									<div class="row space-above-10">
+										<div class="col-md-3 col-align-right">
+											Start:
+										</div>
+										<div class="col-md-9">
+											<input type="text" class="form-control" name="start_time">
+										</div>
+									</div>
+									<div class="row space-above-10">
+										<div class="col-md-3 col-align-right">
+											Stop:
+										</div>
+										<div class="col-md-9">
+											<input type="text" class="form-control" name="stop_time">
+										</div>
+									</div>
+									<div class="row space-above-10">
+										<div class="col-md-offset-3">
+											<input type="submit" class="btn btn-primary" value="Plot">
+										</div>
+									</div>
+								</div>
+								<div class="col-md-3">
+									<div class="row text-center">
+										Y-Zoom
+									</div>
+									<div class="row space-above-10">
+										<div class="col-md-3 col-align-right">
+											Start:
+										</div>
+										<div class="col-md-9">
+											<input type="text" class="form-control" name="ylim_lower">
+										</div>
+									</div>
+									<div class="row space-above-10">
+										<div class="col-md-3 col-align-right">
+											Stop:
+										</div>
+										<div class="col-md-9">
+											<input type="text" class="form-control" name="ylim_upper">
+										</div>
+									</div>
+								</div>
+								<div class="col-md-2 col-align-right">
+									<div class="space-above-20">
+										<a href="/delete-plot/{{ sim_id }}/{{ plot_item.id }}/">
+												<button type="button"
+																class="btn btn-danger">Delete</button></a>
+									</div>
+								</div>
+							</div>
+						<br>
+						{% csrf_token %}
+						</form>
+					{% endif %}
+				{% endfor %}
+		{% else %}
+			<p>No plots to display. Use the "Add plot" button to add a plot.</p>
+		{% endif %}
+
+		<br><br>
+		<a href="/browse-simulation/{{ sim_id }}/">
+				<button type="button"
+								class="btn btn-general">Back to main page</button></a>
+
+		<br><br>
+		<h1>Instructions</h1>
+		<ol>
+		<li>If there are no errors in the circuit files, a "Run" button will appear which
+		means that you can run the simulation.</li>
+		<li>Once you a run a simulation, it will remain in the run state until you stop
+		it or close the server. So you can go to another page, browse through circuit lists
+		and data and the simulation will keep running. Also, when the simulation is done,
+		the simulation will remain in the run state. You need to stop the simulation to be
+		able to restart it.</li>
+		<li>If this is a new simulation, there will be no circuit plots. Circuit plots
+		are saved to the database and are associated with a simulation case.</li>
+		<li>For a new simulation, you must run the simulation to be able to add plots.
+		For an existing simulation, it is recommended to run the simulation to register
+		any updates in the circuit for adding to the plots.</li>
+		<li>To add a plot, click on the "Add plot" button.</li>
+		<li>A circuit plot needs to be given a title. The title is important as when a plot
+		is requested, the waveforms are saved in a PNG file having a name same as the title
+		but without spaces.</li>
+		<li>After choosing the title, click on "Start plot". This will now allow you to
+		add waveforms.</li>
+		<li>To add a waveform, click on the "Add waveform" button. This will display a form
+		with the waveform legend which is what will appear on the waveform, the scale which
+		is used to magnify or attenuate a waveform and the source of the waveform which
+		is a drop down list. This list contains all the meters and variable storage elements
+		in the simulation.</li>
+		<li>Do not forget to click on the "Save waveform" button after entering data.</li>
+		<li>You can have multiple waveforms in a plot with different scales to compare
+		different quantities.</li>
+		<li>Once done adding all the waveforms, click on "Save plot" button to save the
+		plot. The plot will now appear in a list with a "Plot" button and a "Delete"
+		button next to it.</li>
+		<li>Add as many plots as needed. There is no provision to edit a plot. Delete
+		an existing plot and add a new one.</li>
+		<li>The time range specified above can be used to generate a zoomed in plot.
+		If an invalid time range is specified, the entire data file is plotted and no
+		error will be generated.</li>
+		<li>When the "Plot" button is clicked, a PNG file with the waveform will be
+		stored in the working directory. The name of the file will be the same as the title
+		but without spaces. For example, "Plot 1" will be Plot1.png. "Current vs Voltage"
+		will be CurrentvsVoltage.png.</li>
+		<li>You can click on the "Plot" button as many times while the simulation runs.
+		The old PNG file will be deleted and a new file will be written to.</li>
+		</ol>
+		<br><br>
+		<script type="text/javascript" src="{% static "js/forms.js" %}">
+
+		</script>
+	{% endblock %}
+</body>

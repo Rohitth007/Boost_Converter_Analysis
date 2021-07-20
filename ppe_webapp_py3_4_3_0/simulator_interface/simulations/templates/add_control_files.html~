@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+
+{% extends "base_framework.html" %}
+
+<head>
+	<title>
+	</title>
+</head>
+
+<body>
+	<br><br>
+	{% block main_body_content %}
+		<form action="" method="post">
+		
+		{% if control_file_form %}
+			<p>Browse your computer and upload the control (.py) files. Read the instructions
+			below for more information.</p>
+			<table>
+				{% for control_item in control_file_form %}
+					<tr>
+						<td style="text-align:left; padding:25px"> {{ forloop.counter }}. </td>
+						<td>
+							{% if control_item.0 %}
+								<table>
+								<tr>
+									<td style="right-padding:35px">
+										<table>
+											<tr style="padding:15px">
+												<td>File name: </td>
+												<td>{{ control_item.0.control_file_name }}</td>
+											</tr>
+											<tr>
+												<td>File description:</td>
+												<td>{{ control_item.0.control_file_descrip }}</td>
+											</tr>
+										</table>
+									</td>
+									<td style="left-padding:35px">
+									<input type="submit" name="config_control_id_{{ control_item.0.id }}" Value="Configure control"> <br>
+									</td>
+								</tr>
+								</table>
+								{% for control_error_item in control_item.1 %}
+									{% if control_error_item %}
+										{% for all_control_errors in control_error_item.errors %}
+												<font color="red"> {{ all_control_errors }} </font> <br>
+										{% endfor %}
+									{% endif %}
+								{% endfor %}
+								Want to change this file? <br> Click
+								<input type="submit" name="change_control_id_{{ control_item.0.id }}" Value="Remove control">
+								and add another one using "Add control" button below. <br><br>
+							{% else %}
+								<table>
+									{% for control_field in control_item.1 %}
+									<tr>
+										<td>{{ control_field.label }}</td>
+										<td> {{ control_field }}
+										{% if control_field.errors %}
+											{% for all_control_errors in control_field.errors %}
+												<font color="red"> {{ all_control_errors }} </font>
+											{% endfor %}
+										{% endif %}</td>
+									</tr>
+									{% endfor %}
+									<tr>
+										<td></td>
+										<td><input type="submit" name="save_control" value="Save control file"></td>
+									</tr>
+								</table>
+							{% endif %}
+						</td>
+					</tr>
+				{% endfor %}
+			</table>
+			<br>
+			<input type="submit" name="add_control" value="Add control file">
+			Use this button to add control files.
+			<br> <br>
+			<input type="submit" name="main_page" value="Back to main page">
+		{% endif %}
+		<input type="hidden" name="sim_id" value="{{ sim_id }}">
+		<input type="hidden" name="sim_state" value="{{ sim_state }}">
+		{% csrf_token %}
+		</form>
+		<br><br>
+		<h1>Instructions</h1>
+		<ol>
+		<li>All control files must be in the same working directory as that specified
+		in the "Edit simulation parameters" page.</li>
+		<li>All control files must be Python 2 .py files.</li>
+		<li>After using the "Browse" button to add a control file, do not forget to click
+		"Save control file" button to save the control file to the data base.</li>
+		<li>Once a control file is saved, it appears in a list of control files along
+		with a "Configure control" button next to it.</li>
+		<li>Click on the "Configure control" button to design the interface for the control
+		file - the inputs, outputs and other special variables.</li>
+		<li>There is no provision to edit a control file. If you want to make changes,
+		delete the existing file and add a new one.</li>
+		<li>For a new control file, you must configure the control file because it will
+		have no input/output ports which makes it useless. For existing control files,
+		it is recommended to browse through a control file's configuration before running
+		the simulation.</li>
+		<li>Once done with all editing, click on the "Back to main page" button to
+		continue.</li>
+		</ol>
+	{% endblock %}
+</body>

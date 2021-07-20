@@ -1,0 +1,3 @@
+StaticVariable, Desired variable name in control code = mod_signal, Initial value of variable = 0.0, 
+TimeEvent, Desired variable name in control code = t1, First time event = 0.0, 
+VariableStorage, Desired variable name in control code = open_control_mod_signal, Initial value of variable = 0.0, Plot variable in output file = yes, 

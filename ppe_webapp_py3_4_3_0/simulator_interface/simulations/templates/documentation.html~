@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+
+{% extends "base_framework.html" %}
+
+<head>
+	<title>
+	</title>
+</head>
+
+<body>
+	<br><br>
+	{% block main_body_content %}
+		<form action="" method="post">
+		{% if ckt_error_list %}
+			<p>The following errors have been found in the simulation. Go back to the previous 
+			page and click on the "Edit Simulation", "Add circuits" and "Edit parameters" buttons
+			to make corrections.
+			</p>
+			<ol>
+			{% for ckt_error_item in ckt_error_list %}
+				<li>{{ ckt_error_item }}</li>
+			{% endfor %}
+			</ol>
+		{% else %}
+			<p>Read the instructions below for more information.</p>
+			{% if run_state == 0 %}
+				<p>The simulation is ready, click on the Run button to start it.</p>
+			{% endif %}
+
+			{% if run_state == 1 %}
+				<p>The simulation is running. If you want to restart it, click on the Stop button
+				to stop the simulation and then click on Run.</p>
+			{% endif %}
+			
+			{% if run_state == 2 %}
+				<p>The simulation has been stopped. If you want to restart it, click on the Run
+				button.</p>
+			{% endif %}
+			
+			{% if run_state == 0 or run_state == 2 %}
+				<input type="submit" name="run_simulation" value="Run">
+			{% endif %}
+			{% if run_state == 1 %}
+				<input type="submit" name="stop_simulation" value="Stop">
+			{% endif %}
+		{% endif %}
+
+		<br><br>
+
+		<p>Time range:</p>
+		Start: <input type="text" name="start_time"> <br>
+		Stop: <input type="text" name="stop_time"> <br>
+		<p>If the time range is invalid, the entire data file will be plotted.</p>
+		{% for plot_items in plot_form_list %}
+			<table>
+			<tr>
+			<td style="text-align:left; padding:25px">
+			{% if plot_items.0.1 == 1 %}
+				<table>
+				{{ plot_items.0.0 }} <br>
+				<input type="submit" name="start_plot" value="Start plot"> <br>
+				</table>
+			{% else %}
+				<b>Plot title:</b>{{ plot_items.0.0.plot_title }} <br>
+				{% if plot_items.2 == 1 %}
+					{% for waveform_items in plot_items.1 %}
+						{% if waveform_items.1 == 1 %}
+							{% for waveform_comps in waveform_items.0 %}
+								<b>{{ waveform_comps.label }}:</b> {{ waveform_comps }} <br>
+							{% endfor %}
+							<b>Waveform source:</b>
+						 	<select name="waveform_source">
+						 	{% for plots_in_sim in all_waveforms_sim %}
+	  							<option value="{{ plots_in_sim.line_name }}">{{ plots_in_sim.line_name }}</option>
+	  						{% endfor %}
+	  						</select> <br>
+	  						<input type="submit" name="save_waveform" value="Save waveform"><br>
+						{% else %}
+							<b>Waveform {{ forloop.counter }}: </b>{{ waveform_items.0.waveform_legend }} <br>
+						{% endif %}
+					{% endfor %}
+					<input type="submit" name="add_waveform" value="Add waveform"><br>
+				{% else %}
+					{% for waveform_items in plot_items.1 %}
+						<b>Waveform {{ forloop.counter }}: </b>{{ waveform_items.0.waveform_legend }} <br>
+					{% endfor %}
+				{% endif %}
+				{% if plot_items.2 == 1 %}
+					<br>
+					<input type="submit" name="save_plot" value="Save plot"><br>
+				{% endif %}
+			{% endif %}
+			</td>
+			<td style="text-align:left; padding:25px">
+				{% if plot_items.2 == 0 %}
+					<br>
+					<input type="submit" name="generate_plot_{{ plot_items.0.0.id }}" 
+					value="Plot"><br>
+				{% endif %}
+			</td>
+			<td style="text-align:left; padding:25px">
+				{% if plot_items.2 == 0 %}
+					<br>
+					<input type="submit" name="delete_plot_{{ plot_items.0.0.id }}" 
+					value="Delete plot"><br>
+				{% endif %}
+			</td>
+			</tr>
+			</table>
+			<br>
+		{% empty %}
+			<p>No plots to display. Use the "Add plot" button below to create new plots.</p>
+		{% endfor %}
+		
+		
+		<br><br>
+		
+		<p>Click on the "Add plot" button below to create a new plot.</p>
+		<input type="submit" name="add_plot" value="Add plot">
+		<br><br>
+		<br><br>
+		<input type="submit" name="main_page" value="Back to main page">
+
+		<input type="hidden" name="sim_id" value="{{ sim_id }}">
+		<input type="hidden" name="sim_state" value="{{ sim_state }}">
+		<input type="hidden" name="plot_id" value="{{ plot_id }}">
+		{% csrf_token %}
+		</form>
+		<br><br>
+		<h1>Instructions</h1>
+		<ol>
+		<li>If there are no errors in the circuit files, a "Run" button will appear which
+		means that you can run the simulation.</li>
+		<li>Once you a run a simulation, it will remain in the run state until you stop
+		it or close the server. So you can go to another page, browse through circuit lists
+		and data and the simulation will keep running. Also, when the simulation is done,
+		the simulation will remain in the run state. You need to stop the simulation to be
+		able to restart it.</li>
+		<li>If this is a new simulation, there will be no circuit plots. Circuit plots
+		are saved to the database and are associated with a simulation case.</li>
+		<li>For a new simulation, you must run the simulation to be able to add plots.
+		For an existing simulation, it is recommended to run the simulation to register
+		any updates in the circuit for adding to the plots.</li>
+		<li>To add a plot, click on the "Add plot" button.</li>
+		<li>A circuit plot needs to be given a title. The title is important as when a plot
+		is requested, the waveforms are saved in a PNG file having a name same as the title
+		but without spaces.</li>
+		<li>After choosing the title, click on "Start plot". This will now allow you to
+		add waveforms.</li>
+		<li>To add a waveform, click on the "Add waveform" button. This will display a form
+		with the waveform legend which is what will appear on the waveform, the scale which
+		is used to magnify or attenuate a waveform and the source of the waveform which
+		is a drop down list. This list contains all the meters and variable storage elements
+		in the simulation.</li>
+		<li>Do not forget to click on the "Save waveform" button after entering data.</li>
+		<li>You can have multiple waveforms in a plot with different scales to compare
+		different quantities.</li>
+		<li>Once done adding all the waveforms, click on "Save plot" button to save the
+		plot. The plot will now appear in a list with a "Plot" button and a "Delete"
+		button next to it.</li>
+		<li>Add as many plots as needed. There is no provision to edit a plot. Delete
+		an existing plot and add a new one.</li>
+		<li>The time range specified above can be used to generate a zoomed in plot.
+		If an invalid time range is specified, the entire data file is plotted and no
+		error will be generated.</li>
+		<li>When the "Plot" button is clicked, a PNG file with the waveform will be
+		stored in the working directory. The name of the file will be the same as the title
+		but without spaces. For example, "Plot 1" will be Plot1.png. "Current vs Voltage"
+		will be CurrentvsVoltage.png.</li>
+		<li>You can click on the "Plot" button as many times while the simulation runs.
+		The old PNG file will be deleted and a new file will be written to.</li>
+		</ol>
+		<br><br>
+	{% endblock %}
+</body>

@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+{% extends "base_framework.html" %}
+{% load staticfiles %}
+
+<head>
+	<title>
+	</title>
+</head>
+
+<body>
+	<br><br>
+	{% block main_body_content %}
+		<p>Below is the list of all components in this circuit. Read instructions below for
+		more information.</p>
+		<p>Or use the upload option to upload a circuit parameter spreadsheet.</p>
+		<form action="/import-ckt-parameters/{{ sim_id }}/{{ ckt_id }}/" method="post">
+			<div class="row">
+				<div class="col-md-5">
+					<input type="file" name="import_ckt_para" class=form-control>
+				</div>
+			</div>
+			<div class="row space-above-10">
+				<div class="col-md-5">
+					<input type="submit" value="Upload file" class="btn btn-primary">
+				</div>
+			</div>
+			{% csrf_token %}
+		</form>
+		{% if error_message %}
+			<p class="error-message-font">{{ error_message }}</p>
+		{% endif %}
+		<br> <br>
+		<p>Click on the export button below to export the component parameters of this
+		sheet to a spreadsheet with _params.csv appended to the circuit schematic name.</p>
+		<a href="/export-ckt-parameters/{{ sim_id }}/{{ ckt_id }}/">
+				<button type="button" class="btn btn-primary">Export parameters</button></a> <br> <br> <br>
+		{% for ckt_item in ckt_component_list %}
+			{% if ckt_item.2 %}
+			<div class="row">
+				<div class="col-md-1">
+					{{ forloop.counter }}.
+				</div>
+				<div class="col-md-4">
+					{% for comp_spec in ckt_item.0 %}
+					<div class="row">
+						{{ comp_spec.0 }}: {{ comp_spec.1 }}
+					</div>
+					{% endfor %}
+				</div>
+				<div class="col-md-2">
+					<a href="/edit-comp-parameters/{{ sim_id }}/{{ ckt_id }}/{{ ckt_item.1.comp_pos_3D }}/">
+						<button type="button"
+										class="btn btn-primary">Edit parameters</button></a>
+				</div>
+			</div>
+			{% else %}
+				<div class="row">
+					<div class="col-md-5">
+						<form action="" method="post">
+							{% for comp_form_item in form %}
+								<div class="form-group">
+									<div class="row">
+										<div class="col-md-5 col-align-right">
+											<label class="control-label">{{ comp_form_item.label }}:</label>
+										</div>
+										<div class="col-md-5">
+											<div class="form-field">
+												{{ comp_form_item }}
+											</div>
+										</div>
+									</div>
+								</div>
+								{% for form_item_errors in comp_form_item.errors %}
+									<p class="error-message-font">{{ form_item_errors }}</p>
+								{% endfor %}
+							{% endfor %}
+							<div class="row">
+								<div class="col-md-offset-3">
+									<input type="submit" class="btn btn-primary" value="Save parameters">
+								</div>
+							</div>
+							{% csrf_token %}
+						</form>
+					</div>
+					<div class="col-md-5">
+						<div class="row">
+							<h4><b>Existing parameters</b></h4>
+						</div>
+						{% for comp_spec in ckt_item.0 %}
+							<div class="row">
+								{{ comp_spec.0 }}: {{ comp_spec.1 }}
+							</div>
+						{% endfor %}
+					</div>
+				</div>
+			{% endif %}
+
+			<br><br>
+		{% endfor %}
+
+		<a href="/edit-ckt-parameters/{{ sim_id }}/">
+			<button type="button"
+							class="btn btn-primary">Back to circuit list</button></a>
+
+		<br><br>
+		<h1>Instructions</h1>
+		<ol>
+		<li>The existing parameters of each component is listed. If you want to change
+		the parameters of any component, click on the "Edit parameters" button below
+		each component.</li>
+		<li>Upon clicking the "Edit parameters" button, the list of all components will
+		be displayed with the component chosen for editing having a form for entering new
+		parameters. Do not forget to click on the "Save parameters" button after entering
+		new parameters.</li>
+		<li>Clicking any button will reload the entire page with all components and the
+		webpage scroll position will be default at the top. Scroll down to the component
+		that you are interested in.</li>
+		<li>If after clicking on "Edit parameters" button, you change your mind and do not
+		want to change the existing parameters, it is not a problem. As long as you do not
+		click on the "Save parameters" button, the changes will not be saved. Click on any
+		other component's edit button or simply go back to the main page.</li>
+		<li>After changing all data, click on the "Back to circuit list" button to continue.
+		</li>
+		</ol>
+		<br><br>
+		<script type="text/javascript" src="{% static "js/forms.js" %}"></script>
+	{% endblock %}
+</body>

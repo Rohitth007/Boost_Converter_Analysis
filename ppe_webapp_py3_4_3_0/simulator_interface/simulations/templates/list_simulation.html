@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+
+{% extends "base_framework.html" %}
+
+<head>
+	<title>
+	</title>
+</head>
+
+<body>
+	<br><br>
+	{% block main_body_content %}
+		{% for sim_item in simulation_collection %}
+			<div class="row space-above-20">
+				<div class="col-md-1">
+					{{ forloop.counter }}.
+				</div>
+				<div class="col-md-10">
+					<b>Title</b>: {{ sim_item.sim_title }} <br>
+					<b>Description</b>: {{ sim_item.sim_descrip }} <br>
+					<a href="/load-simulation/{{ sim_item.id }}/">
+						<button class="btn btn-primary" type="button">Load simulation</button></a>
+				</div>
+			</div>
+		{% empty %}
+			<p>There are no simulations to load. Use the Create Simulation link above to
+			start building the simulation database.</p>
+		{% endfor %}
+	{% endblock %}
+</body>

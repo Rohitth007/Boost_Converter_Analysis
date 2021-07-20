@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+{% extends "base_framework.html" %}
+{% load staticfiles %}
+
+<head>
+	<title>
+	</title>
+</head>
+
+<body>
+	<br><br>
+	{% block main_body_content %}
+		<p>Read the instructions below for information on this page.</p>
+		<p>Or use the upload option to upload a control parameter spreadsheet.</p>
+		<form action="/import-control-parameters/{{ sim_id }}/{{ control_id }}/" method="post">
+			<div class="row">
+				<div class="col-md-5">
+					<input type="file" class="form-control" name="import_control_para">
+				</div>
+			</div>
+			<div class="row space-above-10">
+				<div class="col-md-5">
+					<input type="submit" class="btn btn-primary" value="Upload file">
+				</div>
+			</div>
+			 <br> <br>
+			{% csrf_token %}
+		</form>
+
+		<p>Click on the export button below to export the control variables to a spreadsheet
+		with _desc appended to the control file name.</p>
+		<a href="/export-control-parameters/{{ sim_id }}/{{ control_id }}/">
+				<button type="button"
+								class="btn btn-primary">Export control</button></a>
+
+		{% if error_message %}
+			<p>{{ error_message }}</p>
+		{% endif %}
+
+		<br> <br>
+
+		<h1>Control inputs</h1>
+		{% if control_component_list.0 %}
+			<p>These are the list of control inputs in the control file. Click on the
+			"Delete" buttons next to each element to delete them. To make changes, delete
+			the existing inputs and add new ones.</p>
+			{% for control_comp in control_component_list.0 %}
+				{% if control_comp %}
+						<div class="row space-above-20">
+							<div class="col-md-offset-1 col-md-4">
+								<b>Input source: </b> {{ control_comp.input_source }} <br>
+								<b>Variable name in control code: </b>
+								{{ control_comp.input_variable_name }} <br>
+							</div>
+							<div class="col-md-3">
+								<a href="/delete-control-input/{{ sim_id }}/{{ control_id }}/{{ control_comp.id }}/">
+										<button type="button"
+														class="btn btn-danger">Delete</button></a>
+							</div>
+						</div>
+				{% endif %}
+			{% endfor %}
+		{% else %}
+			<p>There are no control inputs.</p>
+		{% endif %}
+		{% if form_type == 1 %}
+			<br><br>
+			<form action="" method="post">
+				{% for control_item in form %}
+						<div class="form-group">
+							<div class="row">
+								<div class="col-md-4 col-align-right">
+									<label class="control-label">{{ control_item.label }}:</label>
+								</div>
+								<div class="col-md-4">
+									<div class="form-field">
+										{{ control_item }}
+									</div>
+								</div>
+							</div>
+						</div>
+				{% endfor %}
+				<div class="row space-above-10">
+					<div class="col-md-4 col-align-right">
+						<label class="control-label">Input source:</label>
+					</div>
+					<div class="col-md-4">
+						<select name="input_source" class="form-control">
+							{% for meters_item in meter_list %}
+								<option value="{{ meters_item.comp_name }}">{{ meters_item.comp_name }}</option>
+							{% endfor %}
+						</select>
+					</div>
+				</div>
+				<div class="row space-above-10">
+					<div class="col-md-offset-4">
+						<input type="submit" class="btn btn-primary" value="Save input">
+					</div>
+				</div>
+				{% csrf_token %}
+			</form> <br><br>
+		{% endif %}
+		<br>
+		<p>Click on the "Add control input" button below to add more control inputs.</p>
+		<a href="/add-control-input/{{ sim_id }}/{{ control_id }}/">
+				<button type="button"
+				class="btn btn-primary">Add control input</button></a>
+		<br><br>
+
+		<h1>Control outputs</h1>
+		{% if control_component_list.1 %}
+			<p>These are the list of control outputs in the control file. Click on the
+			"Delete" buttons next to each element to delete them. To make changes, delete
+			the existing outputs and add new ones.</p>
+			{% for control_comp in control_component_list.1 %}
+				{% if control_comp %}
+					<div class="row space-above-20">
+						<div class="col-md-offset-1 col-md-4">
+							<b>Output target: </b> {{ control_comp.output_target }} <br>
+							<b>Variable name in control code: </b>
+							{{ control_comp.output_variable_name }} <br>
+							<b>Initial value of output: </b>
+							{{ control_comp.output_initial_value }} <br>
+						</div>
+						<div class="col-md-3">
+							<a href="/delete-control-output/{{ sim_id }}/{{ control_id }}/{{ control_comp.id }}/">
+									<button type="button"
+													class="btn btn-danger">Delete</button></a>
+						</div>
+					</div>
+				{% endif %}
+			{% endfor %}
+		{% else %}
+			<p>There are no control outputs.</p>
+		{% endif %}
+		{% if form_type == 2 %}
+			{% if control_model_list %}
+					<br><br>
+					<form action="" method="post">
+						{% for control_item in form %}
+								<div class="form-group">
+									<div class="row">
+										<div class="col-md-4 col-align-right">
+											<label class="control-label">{{ control_item.label }}:</label>
+										</div>
+										<div class="col-md-4">
+											<div class="form-field">
+												{{ control_item }}
+											</div>
+										</div>
+									</div>
+								</div>
+						{% endfor %}
+						<div class="row space-above-10">
+							<div class="col-md-4 col-align-right">
+								<label class="control-label">Output target:</label>
+							</div>
+							<div class="col-md-4">
+								<select name="output_target" class="form-control">
+									{% for control_model_item in control_model_list %}
+										<option value="{{ control_model_item.comp_name }}">{{ control_model_item.comp_name }}</option>
+									{% endfor %}
+								</select>
+							</div>
+						</div>
+						<div class="row space-above-10">
+							<div class="col-md-offset-4">
+								<input type="submit" class="btn btn-primary" value="Save output">
+							</div>
+						</div>
+						{% csrf_token %}
+					</form>
+			{% else %}
+					<p>There are no controllable items in the circuit. Cannot add a control output.</p>
+			{% endif %}
+		{% endif %}
+		<br>
+		<p>Click on the "Add control output" button below to add more control outputs.</p>
+		<a href="/add-control-output/{{ sim_id }}/{{ control_id }}/">
+				<button type="button"
+								class="btn btn-primary">Add control output</button></a>
+		<br><br>
+
+		<h1>Static variables</h1>
+		{% if control_component_list.2 %}
+			<p>These are the list of static variables in the control file. Click on the
+			"Delete" buttons next to each element to delete them. To make changes, delete
+			the existing static variables and add new ones.</p>
+			{% for control_comp in control_component_list.2 %}
+				{% if control_comp %}
+					<div class="row space-above-20">
+						<div class="col-md-offset-1 col-md-4">
+							<b>Variable name in control code: </b> {{ control_comp.static_variable_name }} <br>
+							<b>Initial value of variable: </b>
+							{{ control_comp.static_initial_value }} <br>
+						</div>
+						<div class="col-md-3">
+							<a href="/delete-control-staticvar/{{ sim_id }}/{{ control_id }}/{{ control_comp.id }}/">
+									<button type="button"
+													class="btn btn-danger">Delete</button></a>
+						</div>
+					</div>
+				{% endif %}
+			{% endfor %}
+		{% else %}
+			<p>There are no static variables.</p>
+		{% endif %}
+		{% if form_type == 3 %}
+			<br><br>
+			<form action="" method="post">
+				{% for control_item in form %}
+						<div class="form-group">
+							<div class="row">
+								<div class="col-md-4 col-align-right">
+									<label class="control-label">{{ control_item.label }}:</label>
+								</div>
+								<div class="col-md-4">
+									<div class="form-field">
+										{{ control_item }}
+									</div>
+								</div>
+							</div>
+						</div>
+				{% endfor %}
+				<div class="row">
+					<div class="col-md-offset-4">
+						<input type="submit" class="btn btn-primary" value="Save static variable">
+					</div>
+				</div>
+				{% csrf_token %}
+			</form>
+		{% endif %}
+		<br>
+		<p>Click on the "Add static variable" button below to add more static variable
+		elements.</p>
+		<a href="/add-control-staticvar/{{ sim_id }}/{{ control_id }}/">
+				<button type="button"
+								class="btn btn-primary">Add static variable</button></a>
+		<br><br>
+
+		<h1>Time event variables</h1>
+		{% if control_component_list.3 %}
+			<p>These are the list of time event variables in the control file. Click on the
+			"Delete" buttons next to each element to delete them. To make changes, delete
+			the existing time event variables and add new ones.</p>
+			{% for control_comp in control_component_list.3 %}
+				{% if control_comp %}
+					<div class="row space-above-20">
+						<div class="col-md-offset-1 col-md-4">
+							<b>Variable name in control code: </b> {{ control_comp.time_event_name }} <br>
+							<b>Initial time event: </b>
+							{{ control_comp.initial_time_value }} <br>
+						</div>
+						<div class="col-md-3">
+							<a href="/delete-control-timeevent/{{ sim_id }}/{{ control_id }}/{{ control_comp.id }}/">
+									<button type="button"
+													class="btn btn-danger">Delete</button></a>
+						</div>
+					</div>
+				{% endif %}
+			{% endfor %}
+		{% else %}
+			<p>There are no time event variables.</p>
+		{% endif %}
+		{% if form_type == 4 %}
+			<br><br>
+			<form action="" method="post">
+				{% for control_item in form %}
+						<div class="form-group">
+							<div class="row">
+								<div class="col-md-4 col-align-right">
+									<label class="control-label">{{ control_item.label }}:</label>
+								</div>
+								<div class="col-md-4">
+									<div class="form-field">
+										{{ control_item }}
+									</div>
+								</div>
+							</div>
+						</div>
+				{% endfor %}
+				<div class="row">
+					<div class="col-md-offset-4">
+						<input type="submit" class="btn btn-primary" value="Save time event">
+					</div>
+				</div>
+				{% csrf_token %}
+			</form>
+		{% endif %}
+		<br>
+		<p>Click on the "Add time event" button below to add more time event variables.</p>
+		<a href="/add-control-timeevent/{{ sim_id }}/{{ control_id }}/">
+				<button type="button"
+								class="btn btn-primary">Add time event</button></a>
+		<br><br>
+
+		<h1>Variable storage elements</h1>
+		{% if control_component_list.4 %}
+			<p>These are the list of variable storage elements in the control file. Click on the
+			"Delete" buttons next to each element to delete them. To make changes, delete
+			the existing time event variables and add new ones.</p>
+			{% for control_comp in control_component_list.4 %}
+				{% if control_comp %}
+					<div class="row space-above-20">
+						<div class="col-md-offset-1 col-md-4">
+							<b>Variable name in control code: </b> {{ control_comp.variable_storage_name }} <br>
+							<b>Initial value of variable: </b>
+							{{ control_comp.storage_initial_value }} <br>
+							<b>Write to output data file?: </b>
+							{{ control_comp.storage_status }} <br>
+						</div>
+						<div class="col-md-3">
+							<a href="/delete-control-varstore/{{ sim_id }}/{{ control_id }}/{{ control_comp.id }}/">
+									<button type="button"
+													class="btn btn-danger">Delete</button></a>
+						</div>
+					</div>
+				{% endif %}
+			{% endfor %}
+		{% else %}
+			<p>There are no variable storage elements.</p>
+		{% endif %}
+		{% if form_type == 5 %}
+			<br> <br>
+			<form action="" method="post">
+				{% for control_item in form %}
+						<div class="form-group">
+							<div class="row">
+								<div class="col-md-4 col-align-right">
+									<label class="control-label">{{ control_item.label }}:</label>
+								</div>
+								<div class="col-md-4">
+									<div class="form-field">
+										{{ control_item }}
+									</div>
+								</div>
+							</div>
+						</div>
+				{% endfor %}
+				<div class="row">
+					<div class="col-md-offset-4">
+						<input type="submit" class="btn btn-primary" value="Save variable storage">
+					</div>
+				</div>
+				{% csrf_token %}
+			</form>
+		{% endif %}
+		<br>
+		<p>Click on the "Add variable storage" button below to add more variable storage
+		elements.</p>
+		<a href="/add-control-varstore/{{ sim_id }}/{{ control_id }}/">
+				<button type="button"
+								class="btn btn-primary">Add variable storage</button></a>
+
+		<br><br>
+		<a href="/edit-control-files/{{ sim_id }}/">
+			<button type="button"
+							class="btn btn-general">Back to control main</button></a>
+		<br>
+		Click here to go back to previous page with list of control files. <br>
+
+		<br><br>
+		<h1>Instructions</h1>
+		<ol>
+		<li>The configuration of the control file is divided into "Control inputs", "Control
+		outputs", "Static variables", "Time event variables", "Variable storage elements".
+		To know more about these variables, check out the free chapter on control design
+		on my webpage <a href="http://www.pythonpowerelectronics.com/papers/chap4.pdf"
+		>click here</a>.</li>
+		<li>When adding a control input, it provides you with a drop down list of all the meters
+		detected in all the circuits. You can choose one and decide what variable to call it
+		in the control code. That variable name will have the measured value of the meter
+		automatically.</li>
+		<li>When adding a control output, it provides you with a drop down list of all the
+		controllable components.</li>
+		<li>You must click on the "Add" button for a particular type to create a new
+		form.</li>
+		<li>You must click on the "Save" button to save it to the database.</li>
+		<li>There is no cancel button, so if you don't want to save changes, do not click
+		the "Save" button. Instead click on any other "Add" button to remove the form.</li>
+		<li>There is no provision to edit an entry, delete it and add a new one.</li>
+		<li>Once done editing the parameters, click on "Back to control main" button to
+		continue with the other control files.</li>
+		</ol>
+		<br><br>
+		<script type="text/javascript" src="{% static "js/forms.js" %}"></script>
+	{% endblock %}
+</body>

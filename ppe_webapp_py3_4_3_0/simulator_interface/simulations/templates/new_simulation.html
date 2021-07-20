@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+{% extends "base_framework.html" %}
+
+<head>
+	<title>
+	</title>
+</head>
+
+<body>
+	<br><br>
+	{% block main_body_content %}
+
+		<div class="row">
+			<div class="col-md-3 col-align-right">
+				<a href="/edit-simulation/{{ sim_id }}/">
+					<button type="button"
+								class="btn btn-primary">Edit Simulation Parameters</button></a>
+			</div>
+			<div class="col-md-6">
+				Click here to change simulation parameters.
+			</div>
+		</div>
+		<br><br>
+		<div class="row">
+			<div class="col-md-3 col-align-right">
+				<a href="/add-ckt-schematic/{{ sim_id }}/">
+					<button type="button"
+									class="btn btn-primary">Add circuit file</button></a>
+			</div>
+			<div class="col-md-6">
+				Click above to add or remove circuit schematics. If you do add or remove circuits, do not forget to process the circuit schematics before coming back here.
+			</div>
+		</div>
+		<br><br>
+		<div class="row">
+			<div class="col-md-3 col-align-right">
+				<a href="/edit-ckt-parameters/{{ sim_id }}/">
+					<button type="button"
+									class="btn btn-primary">Edit circuit parameters</button></a>
+			</div>
+			<div class="col-md-6">
+				Click above to edit the parameters of the components in the circuit uploaded. You can upload a circuit parameters spreadsheet to import parameters. Also, you can backup your parameters by exporting a parameters spreadsheet.
+			</div>
+		</div>
+		<br><br>
+		<div class="row">
+			<div class="col-md-3 col-align-right">
+				<a href="/edit-control-files/{{ sim_id }}/">
+					<button type="button"
+									class="btn btn-primary">Edit control</button></a>
+			</div>
+			<div class="col-md-6">
+				This is optional and is needed only if you have control in your simulation. Use this to add/remove contol files and also to configure their input/output interface and other special variables.
+			</div>
+		</div>
+		<br><br>
+		<div class="row">
+			<div class="col-md-3 col-align-right">
+				<a href="/view-output-page/{{ sim_id }}/">
+					<button type="button"
+									class="btn btn-primary">View output</button></a>
+			</div>
+			<div class="col-md-6">
+				This is to run/stop the simulation. Also, you can add/remove plots and generate waveforms as .PNG files.
+			</div>
+		</div>
+		<br><br>
+
+	{% endblock %}
+</body>

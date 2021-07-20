@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+
+{% extends "base_framework.html" %}
+
+<head>
+	<title>
+	</title>
+</head>
+
+<body>
+	<br><br>
+	{% block main_body_content %}
+		<form action="" method="post">
+		<p>Below is the list of all components in this circuit. Read instructions below for
+		more information.</p>
+		{% for ckt_item in ckt_component_list %}
+			<table>
+			<tr style="padding:35px">
+			<td style="text-align:left; padding:25px">{{ forloop.counter }}.</td>
+			<td>
+			{% if ckt_item.3 %}
+				{% for comp_spec in ckt_item.0 %}
+					{{ comp_spec.0 }}: {{ comp_spec.1 }} <br>
+				{% endfor %}
+				<input type="submit" name="edit_comp_para_{{ ckt_item.1.comp_pos_3D }}"
+				value="Edit parameters">
+			{% else %}
+				{% for comp_spec in ckt_item.0 %}
+					{{ comp_spec.0 }}: {{ comp_spec.1 }} <br>
+				{% endfor %}
+				{% for comp_form_item in ckt_item.2 %}
+					{{ comp_form_item.label }}: {{ comp_form_item }}
+					{% for form_item_errors in comp_form_item.errors %}
+						<font color="red"> {{ form_item_errors }} </font>
+					{% endfor %}
+					<br>
+				{% endfor %}
+				<input type="submit" name="submit_comp_para_{{ ckt_item.1.comp_pos_3D }}"
+				value="Save parameters">
+			{% endif %}
+
+			<br><br>
+			</td>
+			</tr>
+			</table>
+		{% endfor %}
+		
+		<input type="submit" name="edit_ckt_parameters" value="Back to circuit list">
+
+		<input type="hidden" name="sim_id" value="{{ sim_id }}">
+		<input type="hidden" name="sim_state" value="{{ sim_state }}">
+		{% csrf_token %}
+		</form>
+		<br><br>
+		<h1>Instructions</h1>
+		<ol>
+		<li>The existing parameters of each component is listed. If you want to change
+		the parameters of any component, click on the "Edit parameters" button below
+		each component.</li>
+		<li>Upon clicking the "Edit parameters" button, the list of all components will
+		be displayed with the component chosen for editing having a form for entering new
+		parameters. Do not forget to click on the "Save parameters" button after entering
+		new parameters.</li>
+		<li>Clicking any button will reload the entire page with all components and the
+		webpage scroll position will be default at the top. Scroll down to the component 
+		that you are interested in.</li>
+		<li>If after clicking on "Edit parameters" button, you change your mind and do not
+		want to change the existing parameters, it is not a problem. As long as you do not
+		click on the "Save parameters" button, the changes will not be saved. Click on any
+		other component's edit button or simply go back to the main page.</li>
+		<li>After changing all data, click on the "Back to circuit list" button to continue.
+		</li>
+		</ol>
+	{% endblock %}
+</body>

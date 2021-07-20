@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+
+{% extends "base_framework.html" %}
+
+<head>
+	<title>
+	</title>
+</head>
+
+<body>
+	<br><br>
+	{% block main_body_content %}
+		<form action="" method="post">
+		<p>Read the instructions below for information on this page.</p>
+		<h1>Control inputs</h1>
+		{% if control_component_list.0 %}
+			<p>These are the list of control inputs in the control file. Click on the 
+			"Delete" buttons next to each element to delete them. To make changes, delete 
+			the existing inputs and add new ones.</p>
+			{% for control_comp in control_component_list.0 %}
+				{% if control_comp.0 %}
+					<table><tr>
+					<td style="text-align:left; padding:25px">
+						<b>Input source: </b> {{ control_comp.0.input_source }} <br>
+						<b>Variable name in control code: </b> 
+						{{ control_comp.0.input_variable_name }} <br>
+					</td>
+					<td style="text-align:left; padding:25px">
+						<input type="submit" name="delete_input_{{ control_comp.0.id }}" 
+						value="Delete">
+					</td>
+					</tr></table>
+				{% else %}
+					{% for control_item in control_comp.1 %}
+							<b>{{ control_item.label }}: </b> {{ control_item }} <br>
+					{% endfor %}
+					<b>Input source: </b>
+					<select name="input_source">
+		 			{% for meters_item in meter_list %}
+  						<option value="{{ meters_item.comp_name }}">{{ meters_item.comp_name }}</option>
+  					{% endfor %}
+  					</select> <br>
+  					<input type="submit" name="save_input" value="Save input"><br>
+				{% endif %}
+			{% endfor %}
+		{% else %}
+			<p>There are no control inputs.</p>
+		{% endif %}
+		<p>Click on the "Add control input" button below to add more control inputs.</p>
+		<input type="submit" name="add_control_input" value="Add control input">
+		<br><br>
+		
+		<h1>Control outputs</h1>
+		{% if control_component_list.1 %}
+			<p>These are the list of control outputs in the control file. Click on the 
+			"Delete" buttons next to each element to delete them. To make changes, delete 
+			the existing outputs and add new ones.</p>
+			{% for control_comp in control_component_list.1 %}
+				{% if control_comp.0 %}
+					<table><tr>
+					<td style="text-align:left; padding:25px">
+						<b>Output target: </b> {{ control_comp.0.output_target }} <br>
+						<b>Variable name in control code: </b> 
+						{{ control_comp.0.output_variable_name }} <br>
+						<b>Initial value of output: </b> 
+						{{ control_comp.0.output_initial_value }} <br>
+					</td>
+					<td style="text-align:left; padding:25px">
+						<input type="submit" name="delete_output_{{ control_comp.0.id }}" 
+						value="Delete">
+					</td>
+					</tr></table>
+				{% else %}
+					{% for control_item in control_comp.1 %}
+						{{ control_item.label }}: {{ control_item }} <br>
+					{% endfor %}
+					<b>Controllable component: </b>
+					<select name="output_target">
+		 			{% for control_model_item in control_model_list %}
+  						<option value="{{ control_model_item.comp_name }}">{{ control_model_item.comp_name }}</option>
+  					{% endfor %}
+  					</select> <br>
+  					<input type="submit" name="save_output" value="Save output"><br>
+				{% endif %}
+			{% endfor %}
+		{% else %}
+			<p>There are no control outputs.</p>
+		{% endif %}
+		<p>Click on the "Add control output" button below to add more control outputs.</p>
+		<input type="submit" name="add_control_output" value="Add control output">
+		<br><br>
+		
+		<h1>Static variables</h1>	
+		{% if control_component_list.2 %}
+			<p>These are the list of static variables in the control file. Click on the 
+			"Delete" buttons next to each element to delete them. To make changes, delete 
+			the existing static variables and add new ones.</p>
+			{% for control_comp in control_component_list.2 %}
+				{% if control_comp.0 %}
+						<table><tr>
+						<td style="text-align:left; padding:25px">
+							<b>Variable name in control code: </b> 
+							{{ control_comp.0.static_variable_name }} <br>
+							<b>Initial value of output: </b> 
+							{{ control_comp.0.static_initial_value }} <br>
+						</td>
+						<td style="text-align:left; padding:25px">
+							<input type="submit" name="delete_staticvar_{{ control_comp.0.id }}" 
+							value="Delete">
+						</td>
+						</tr></table>
+				{% else %}
+					{% for control_item in control_comp.1 %}
+						{{ control_item.label }}: {{ control_item }} <br>
+					{% endfor %}
+					<input type="submit" name="save_staticvar" value="Save static variable"><br>
+				{% endif %}
+			{% endfor %}
+		{% else %}
+			<p>There are no static variables.</p>
+		{% endif %}
+		<p>Click on the "Add static variable" button below to add more static variable
+		elements.</p>
+		<input type="submit" name="add_control_static" value="Add static variable">
+		<br><br>
+		
+		<h1>Time event variables</h1>
+		{% if control_component_list.3 %}
+			<p>These are the list of time event variables in the control file. Click on the 
+			"Delete" buttons next to each element to delete them. To make changes, delete 
+			the existing time event variables and add new ones.</p>
+			{% for control_comp in control_component_list.3 %}
+				{% if control_comp.0 %}
+					<table><tr>
+					<td style="text-align:left; padding:25px">
+						<b>Variable name in control code: </b> 
+						{{ control_comp.0.time_event_name }} <br>
+						<b>Initial time event: </b> 
+						{{ control_comp.0.initial_time_value }} <br>
+					</td>
+					<td style="text-align:left; padding:25px">
+						<input type="submit" name="delete_timeevent_{{ control_comp.0.id }}" 
+						value="Delete">
+					</td>
+					</tr></table>
+				{% else %}
+					{% for control_item in control_comp.1 %}
+						{{ control_item.label }}: {{ control_item }} <br>
+					{% endfor %}
+					<input type="submit" name="save_timeevent" value="Save time event"><br>
+				{% endif %}
+			{% endfor %}
+		{% else %}
+			<p>There are no time event variables.</p>
+		{% endif %}
+		<p>Click on the "Add time event" button below to add more time event variables.</p>
+		<input type="submit" name="add_control_timeevent" value="Add time event">
+		<br><br>
+		
+		<h1>Variable storage elements</h1>
+		{% if control_component_list.4 %}
+			<p>These are the list of variable storage elements in the control file. Click on the 
+			"Delete" buttons next to each element to delete them. To make changes, delete 
+			the existing time event variables and add new ones.</p>
+			{% for control_comp in control_component_list.4 %}
+				{% if control_comp.0 %}
+					<table><tr>
+					<td style="text-align:left; padding:25px">
+						<b>Variable name in control code: </b> 
+						{{ control_comp.0.variable_storage_name }} <br>
+						<b>Initial value of output: </b> 
+						{{ control_comp.0.storage_initial_value }} <br>
+						<b>Write to output data file?: </b> 
+						{{ control_comp.0.storage_status }} <br>
+					</td>
+					<td style="text-align:left; padding:25px">
+						<input type="submit" name="delete_varstore_{{ control_comp.0.id }}" 
+						value="Delete">
+					</td>
+					</tr></table>
+				{% else %}
+					{% for control_item in control_comp.1 %}
+						{{ control_item.label }}: {{ control_item }} <br>
+					{% endfor %}
+					<input type="submit" name="save_varstore" value="Save variable storage"><br>
+				{% endif %}
+			{% endfor %}
+		{% else %}
+			<p>There are no variable storage elements.</p>
+		{% endif %}
+		<p>Click on the "Add variable storage" button below to add more variable storage
+		elements.</p>
+		<input type="submit" name="add_control_varstore" value="Add variable storage">
+		
+		<br><br>
+		<input type="submit" name="add_control" value="Back to control main"> 
+		<br>
+		Click here to go back to previous page with list of control files. <br>
+
+		<input type="hidden" name="sim_id" value="{{ sim_id }}">
+		<input type="hidden" name="sim_state" value="{{ sim_state }}">
+		<input type="hidden" name="control_id" value="{{ control_id }}">
+		{% csrf_token %}
+		</form>
+		<br><br>
+		<h1>Instructions</h1>
+		<ol>
+		<li>The configuration of the control file is divided into "Control inputs", "Control 
+		outputs", "Static variables", "Time event variables", "Variable storage elements".
+		To know more about these variables, check out the free chapter on control design
+		on my webpage <a href="http://www.pythonpowerelectronics.com/papers/chap4.pdf"
+		>click here</a>.</li>
+		<li>When adding a control input, it provides you with a drop down list of all the meters
+		detected in all the circuits. You can choose one and decide what variable to call it 
+		in the control code. That variable name will have the measured value of the meter
+		automatically.</li>
+		<li>When adding a control output, it provides you with a drop down list of all the
+		controllable components.</li>
+		<li>You must click on the "Add" button for a particular type to create a new
+		form.</li>
+		<li>You must click on the "Save" button to save it to the database.</li>
+		<li>There is no cancel button, so if you don't want to save changes, do not click
+		the "Save" button. Instead click on any other "Add" button to remove the form.</li>
+		<li>There is no provision to edit an entry, delete it and add a new one.</li>
+		<li>Once done editing the parameters, click on "Back to control main" button to
+		continue with the other control files.</li>
+		</ol>
+	{% endblock %}
+</body>

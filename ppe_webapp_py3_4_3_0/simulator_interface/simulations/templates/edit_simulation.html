@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+{% extends "base_framework.html" %}
+{% load staticfiles %}
+
+<head>
+	<title>
+	</title>
+</head>
+
+<body>
+	<br><br>
+	{% block main_body_content %}
+		<form action="" method="post" class="form-horizontal">
+		<p>This form sets the basic simulation parameters. Read the instructions below for
+		more information.</p>
+		{% if simulation %}
+			<h3>Simulation Parameters</h3>
+			<div class="row space-above-10">
+				<div class="col-md-3 col-align-right">
+					<b>Simulation title:</b>
+				</div>
+				<div class="col-md-8">
+					{{ simulation.sim_title }}
+				</div>
+			</div>
+			<div class="row space-above-10">
+				<div class="col-md-3 col-align-right">
+					<b>Simulation description:</b>
+				</div>
+				<div class="col-md-8">
+					{{ simulation.sim_descrip }}
+				</div>
+			</div>
+			<div class="row space-above-10">
+				<div class="col-md-3 col-align-right">
+					<b>Time duration:</b>
+				</div>
+				<div class="col-md-8">
+					{{ simulation.sim_time_limit }}
+				</div>
+			</div>
+			<div class="row space-above-10">
+				<div class="col-md-3 col-align-right">
+					<b>Integration time step:</b>
+				</div>
+				<div class="col-md-8">
+					{{ simulation.sim_time_step }}
+				</div>
+			</div>
+			<div class="row space-above-10">
+				<div class="col-md-3 col-align-right">
+					<b>Time step of data storage:</b>
+				</div>
+				<div class="col-md-8">
+					{{ simulation.sim_time_data }}
+				</div>
+			</div>
+			<div class="row space-above-10">
+				<div class="col-md-3 col-align-right">
+					<b>Output data file:</b>
+				</div>
+				<div class="col-md-8">
+					{{ simulation.sim_output_file }}
+				</div>
+			</div>
+			<div class="row space-above-10">
+				<div class="col-md-3 col-align-right">
+					<b>Slice the output file?:</b>
+				</div>
+				<div class="col-md-8">
+					{{ simulation.sim_output_slice }}
+				</div>
+			</div>
+			<div class="row space-above-10">
+				<div class="col-md-3 col-align-right">
+					<b>Number of slices:</b>
+				</div>
+				<div class="col-md-8">
+					{{ simulation.sim_div_number }}
+				</div>
+			</div>
+			<div class="row space-above-10">
+				<div class="col-md-3 col-align-right">
+					<b>Directory with circuit files:</b>
+				</div>
+				<div class="col-md-8">
+					{{ simulation.sim_working_directory }}
+				</div>
+			</div>
+			<br>
+			<a href="/new-simulation/{{ simulation.id }}/"><button type="button"
+				 class="btn btn-primary">Edit Simulation Parameters</button></a>
+			Click here to change the parameters.
+			<br> <br>
+			<a href="/browse-simulation/{{ simulation.id }}"><button type="button"
+				class="btn btn-general">Back to main page</button></a>
+		{% endif %}
+
+		{% if form %}
+			{% if form.errors %}
+				<p class="error-warning"> There are errors in the form! </p>
+			{% endif %}
+			{% for sim_item in form %}
+				<div class="row space-above-10">
+						<div class="form-group">
+							<div class="col-md-3 col-align-right">
+								<label class="control-label">{{ sim_item.label }}</label>
+							</div>
+							<div class="col-md-8">
+								<div class="form-field">
+									{{ sim_item }}
+								</div>
+							</div>
+						</div>
+				</div>
+				{% if sim_item.errors %}
+					<div class="row">
+						<div class="col-md-offset-3">
+							<div class="error-message-font">
+								{% for sim_errors in sim_item.errors %}
+									{{ sim_errors }}<br>
+								{% endfor %}
+							</div>
+						</div>
+					</div>
+				{% endif %}
+			{% endfor %}
+
+			<br>
+			<div class="row">
+				<div class="col-md-offset-3">
+					<input type="submit" value="Save Simulation Parameters" class="btn btn-primary">
+				</div>
+			</div>
+			<br> <br>
+		{% endif %}
+
+		{% csrf_token %}
+		</form>
+
+		<script src="{% static "js/forms.js" %}"></script>
+		<h1>Instructions</h1>
+		<ol>
+		<li>Title does not have to be unique. But limited to 100 characters</li>
+		<li>Description is not necessary but is recommended to document the simulation.</li>
+		<li>Time limit is in seconds.</li>
+		<li>Integration time step is extremely important as it affects the numerical stability
+		of the simulation. Choose a value as small as possible. Very small values however can
+		slow down the simulation. For typical power electronic circuits with converters
+		switching at 5 kHz, 1 microsecond will do. For high frequency converters, reduce
+		this to nanoseconds.</li>
+		<li>Data storage time step is how often you want to store data to the output file.
+		This affects the resolution of the plotted waveforms. The number has to be greater
+		than or equal to the integration time step.</li>
+		<li>Output data file is the name of the output file to which all waveform data
+		will be written. Suggested types are .dat or .txt files.</li>
+		<li>Whether to slice the output file is up to you. This is particularly useful
+		when you also want to plot the waveforms independently using a plotting software
+		such as Gnuplot. When output files are sliced, you can plot segments of waveforms
+		without excessive burden if the simulation data is huge.</li>
+		<li>If you do decide the slice the output file, the number of slices should be
+		greater than 1.</li>
+		<li>The directory with the circuit files will be the working directory of the
+		simulation case. Always maintain simulation cases in separate directories as this
+		avoids corruption of data and allows simulations to be executed independently. To
+		enter this value, choose a file (a circuit file or just copy some file into the
+		directory you choose) and right click on the file. Most operating systems, will
+		give you a list of options on right-clicking a file and one of the options is
+		"Properties". If you click "Properties", the path, location or directory will be
+		listed. Copy this path to the field above. NOTE: Make sure the directory can be
+		written to by the user. Do not choose a root or administrator directory for
+		safety reasons as the simulator will read and write data to this directory.</li>
+		<li>After saving the parameters, they will be listed for you. Check them and
+		click on "Back to main page" to continue.</li>
+		</ol>
+	{% endblock %}
+
+</body>

@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+
+{% extends "base_framework.html" %}
+
+<head>
+	<title>
+	</title>
+</head>
+
+<body>
+	<br><br>
+	{% block main_body_content %}
+		<form action="" method="post">
+		{% if ckt_error_list %}
+			<p>There are errors in the simulation circuit schematics.</p>
+			<ol>
+			{% for error_item in ckt_error_list %}
+				<li>{{ error_item }}</li>
+			{% endfor %}
+			</ol>
+			<br>
+			<p>You need to go back to the "Add circuit files" section and change the spreadsheets
+			that cause the errors.</p>
+			<br><br>
+		{% else %}
+			<p>These are the circuit files in the simulation case. Read the instructions below.
+			</p> <br>
+			{% for ckt_item in ckt_schematics_update %}
+				<table>
+				<tr style="padding:35px">
+				<td style="text-align:left; padding:25px">{{ forloop.counter }}.</td>
+				<td>File name: {{ ckt_item.ckt_file_name }}<br>
+				File description: {{ ckt_item.ckt_file_descrip }} <br>
+				<input type="submit" name="edit_ckt_para_{{ ckt_item.id }}"
+				value="View components">
+				<br><br>
+				</td>
+				</tr>
+				</table>
+			{% endfor %}
+		{% endif %}
+		
+		<input type="submit" name="main_page" value="Back to main page">
+
+		<input type="hidden" name="sim_id" value="{{ sim_id }}">
+		<input type="hidden" name="sim_state" value="{{ sim_state }}">
+		{% csrf_token %}
+		</form>
+		<h1>Instructions</h1>
+		<ol>
+		<li>The files listed above are the files associated with the simulation.</li>		
+		<li>Click on "View components" button below each file to view the components in that
+		circuit file and their parameters. For large simulation cases with several files and
+		components, it may take a few second or up to a minute to display the components
+		as they are being extracted from the database. Do not click on the back button or
+		refresh.</li>
+		<li>If this is a brand new simulation, the components will have default parameters.</li>
+		<li>Whether it is a new simulation or an existing simulation being executed, it is
+		recommended to check the parameters of all components.</li>
+		<li>After entering new data or checking old data, click on "Back to main page"
+		button to continue.</li>
+		</ol>
+	{% endblock %}
+</body>

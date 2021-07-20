@@ -1,0 +1,12 @@
+Ammeter_in,wire,Switch_S1,wire,wire,Ammeter_L1,wire,Inductor_L1,wire,Resistor_R1,wire,wire,wire,wire,wire,wire
+wire,,,,wire,,,,,,,wire,,wire,,wire
+wire,,,,Ammeter_D1,,,,,,,wire,,wire,,wire
+wire,,,,wire,,,,,,,Resistor_Cout,,wire,,wire
+wire,,,,wire,,,,,,,wire,,wire,,wire
+VoltageSource_Vin,,,,Diode_D1,,,,,,,Capacitor_Cout,,Resistor_load,,Voltmeter_Vo
+wire,,,,wire,,,,,,,wire,,wire,,wire
+wire,,,,wire,,,,,,,Ammeter_Cout,,Ammeter_load,,wire
+wire,,,,wire,,,,,,,wire,,wire,,wire
+wire,,,,wire,,,,,,,wire,,wire,,wire
+wire,,,,wire,,,,,,,wire,,wire,,wire
+wire,wire,wire,wire,wire,wire,wire,wire,wire,wire,wire,wire,wire,wire,wire,wire

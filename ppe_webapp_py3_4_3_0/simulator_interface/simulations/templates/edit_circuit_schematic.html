@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+{% extends "base_framework.html" %}
+{% load staticfiles %}
+
+<head>
+	<title>
+	</title>
+</head>
+
+<body>
+	<br><br>
+	{% block main_body_content %}
+		<form class="form-horizontal" action="" method="post">
+
+		{% if ckt_schematic_form %}
+			<p>Browse your computer and upload the circuit schematic spreadsheets (.csv) files.
+			Read the instructions below. NOTE: There is no edit circuit option. Delete the circuit
+			and add a new one. If you change any circuits, click on "Process
+			circuit schematics" button so that the simulator checks for errors.</p>
+			{% for sim_item in ckt_schematic_form %}
+				<div class="row">
+					<div class="col-md-1">
+						{{ forloop.counter }}.
+					</div>
+					<div class="col-md-4">
+						<div class="row">
+							<div class="col-md-6">
+								File name:
+							</div>
+							<div class="col-md-6">
+								{{ sim_item.0.ckt_file_name }}
+							</div>
+						</div>
+						<div class="row">
+							<div class="col-md-6">
+								File description:
+							</div>
+							<div class="col-md-6">
+								{{ sim_item.0.ckt_file_descrip }}
+							</div>
+						</div>
+					</div>
+					<div class="col-md-3">
+							<a href="/remove-ckt-schematic/{{ sim_id }}/{{ sim_item.0.id }}">
+								<button type="button"
+												class="btn btn-danger">Remove circuit</button></a>
+					</div>
+				</div>
+				{% if sim_item.1 %}
+					<div class="error-font">
+						{{ sim_item.1 }}
+					</div>
+				{% endif %}
+				<br><br>
+
+			{% endfor %}
+		{% endif %}
+
+		<div class="form-group">
+			{% for sim_field in form %}
+				<div class="row">
+					<div class="col-md-3 col-align-right">
+						<label class="control-label">{{ sim_field.label }}</label>
+					</div>
+					<div class="col-md-5">
+						<div class="form-field">
+							{{ sim_field }}
+						</div>
+					</div>
+				</div>
+				{% if sim_field.errors %}
+					<div class="row">
+						<div class="col-md-offset-3">
+							{% for all_sim_errors in sim_field.errors %}
+								<p class="error-message-font">{{ all_sim_errors }}</p>
+							{% endfor %}
+						</div>
+					</div>
+				{% endif %}
+			{% endfor %}
+		</div>
+
+		{% if form %}
+			<div class="row">
+				<div class="col-md-offset-3">
+					<input type="submit" value="Save circuit file"
+								class="btn btn-primary">
+				</div>
+			</div>
+		{% endif %}
+
+		<br> <br>
+		{% if ckt_errors == 1 %}
+		{% else %}
+			{% if ckt_schematic_form %}
+				<div class="row">
+					<div class="col-md-3">
+						<a href="/process-ckt-schematics/{{ sim_id }}/">
+								<button type="button"
+												class="btn btn-primary">Process circuit schematics</button></a>
+					</div>
+					<div class="col-md-6">
+						If you are seeing this "Process circuit schematics" button, it means the circuits have been uploaded successfully.
+						If you do not have any more circuits to upload, you need to click on this button to check for errors in the circuits.
+					</div>
+				</div>
+			{% endif %}
+			<br> <br>
+		{% endif %}
+
+		<a href="/add-ckt-schematic/{{ sim_id }}/">
+			<button type="button"
+							class="btn btn-primary">Add circuit schematic</button></a>
+		Click on this button to open a form to add another circuit schematic. <br><br>
+
+		<a href="/browse-simulation/{{ sim_id }}/">
+				<button type="button"
+								class="btn btn-general">Back to main page</button></a> <br>
+
+		{% if ckt_error_list %}
+			<br><br>
+			<p>There are the following errors in the circuits above. You must resolve these errors and click on the
+			"Process circuit schematics" button above to check for errors again:</p>
+			<ol>
+				{% for ckt_error_item in ckt_error_list %}
+					<li>{{ ckt_error_item }}</li>
+				{% endfor %}
+			</ol>
+		{% else %}
+			{% if ckt_errors == 0 %}
+				<p>The circuits do not have any detectable errors. You can continue to enter the
+				parameters by clicking on the "Back to main page" button.</p>
+			{% endif %}
+		{% endif %}
+		{% csrf_token %}
+		</form>
+		<h1>Instructions</h1>
+		<ol>
+		<li>All the circuit spreadsheet files have to be in the same directory which is the
+		"Directory with simulation files" specified in the "Edit Simulation Parameters"
+		page. It is an error to add a circuit which is not in the directory.</li>
+		<li>Use the browse button to add circuit spreadsheet files. After adding the file,
+		do not forget to click on the "Save circuit file" button. On clicking the save
+		button, the file should be listed out. If there is a problem, an error will be
+		displayed along with the form.</li>
+		<li>Click on "Add circuit file" button to add another file in which case it
+		will display another circuit form with a browse button. There can be and it is
+		recommended to have multiple files in a simulation for clarity.</li>
+		<li>The circuit spreadsheets have to be .csv files.</li>
+		<li>Once a circuit appears in the list, it has been added to the database. Unless
+		you choose to delete it, it will be associated with the simulation.</li>
+		<li>If there is an empty form and you wish to proceed, don't worry about the empty
+		file form. Until the same button is clicked, nothing gets added to the database.</li>
+		<li>There is no provision to edit a circuit file. If you make a mistake, delete the
+		file by clicking the "Remove circuit" button and click on "Add circuit" button to
+		add another file.</li>
+		<li>Last but most important. After uploading circuit files, click on the "Process
+		circuit schematics" button. The simulator checks for errors and will display the errors.
+		At the same time the simulator populates the database if no errors are found with
+		details of circuit components. This helps in the later stages of the simulation.
+		So if any changes are made to the circuits, do not forget to click on this button.</li>
+		<li>After it has been checked that no errors result from clicking the "Process
+		circuit schematics" button, click on "Back to main page" button to continue.</li>
+		</ol>
+		<br><br>
+		<script type="text/javascript" src="{% static "js/forms.js" %}">
+		</script>
+	{% endblock %}
+</body>

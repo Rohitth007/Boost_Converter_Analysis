@@ -1,0 +1,16 @@
+Ammeter,L1,1A,Positive polarity towards (cell) = 1B
+Ammeter,D1,1G,Positive polarity towards (cell) = 1H
+Ammeter,S1,4F,Positive polarity towards (cell) = 5F
+Ammeter,load,7O,Positive polarity towards (cell) = 8O
+Ammeter,C1,8M,Positive polarity towards (cell) = 9M
+Inductor,L1,1C,0.001
+Resistor,L1,1E,0.01
+Resistor,D1,1K,0.1
+Resistor,C1,4M,0.01
+Resistor,load,5O,40.0
+Resistor,S1,8F,0.01
+Diode,D1,1I,Voltage level (V) = 1000.000000,Cathode polarity towards (cell) = 1J
+VoltageSource,Vin,6A,Peak (Volts) = 0.000000,Frequency (Hertz) = 0.000000,Phase (degrees) = 0.000000,Dc offset = 12.000000,Positive polarity towards (cell) = 5A
+Switch,S1,6F,Voltage level (V) = 1000.000000,Negative polarity towards (cell) = 7F,Name of control signal = switch_S1
+Capacitor,C1,6M,0.0005,Positive polarity towards (cell) = 5M
+Voltmeter,Vo,6Q,Rated voltage level to be measured = 1000.0,Positive polarity towards (cell) = 5Q

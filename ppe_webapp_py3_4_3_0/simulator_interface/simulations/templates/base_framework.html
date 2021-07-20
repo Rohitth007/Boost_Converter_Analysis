@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+{% load staticfiles %}
+
+<head>
+	<title>{% block title %}Python Power Electronics{% endblock %}
+	</title>
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+	<link rel="stylesheet" type="text/css" href="{% static "css/style.css" %}">
+</head>
+
+<body>
+	{% block top_heading %}
+	<h1><a class="page-title" href="/">Python Power Electronics</a></h1> <br>
+	<div class="center-nav">
+		<nav class="navbar navbar-default">
+			<div class="container-fluid">
+				<ul class="nav navbar-nav">
+					<li class="active-hover"><a href="/simulation-library/">Simulation Library</a></li>
+					<li class="active-hover"><a href="/new-simulation/">Create Simulation</a></li>
+					<li class="active-hover"><a href="/documentation/">Documentation</a></li>
+				</ul>
+				<ul class="nav navbar-nav navbar-right">
+					<li class="active-hover"><a href="/contact/">Contact</a></li>
+				</ul>
+			</div>
+		</nav>
+	</div>
+	{% endblock %}
+
+	{% block main_body %}
+		<div class="page-content">
+			{% block main_body_content %}
+				<p>To begin using the simulator choose any of the links above. The links:</p>
+				<ol>
+					<li>Simulation library is the list of all the simulations in this database. You can rerun a simulation, or change an
+					existing simulation. This option can also be used if all you want is to extend a simulation, in which you can make a
+					copy of an existing simulation.</li>
+					<li>Create Simulation is if you want to start a simulation from scratch.</li>
+					<li>Documention is if you need help on how to use the simulator.</li>
+				</ol>
+			{% endblock %}
+		</div>
+	{% endblock %}
+
+</body>

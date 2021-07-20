@@ -1,0 +1,52 @@
+h1 {
+  text-align: center;
+}
+
+a.page-title {
+  text-decoration: none;
+}
+
+.center-nav {
+  width: 80%;
+  margin-left: 10%;
+}
+
+.nav-wide {
+  width: 100%;
+}
+
+.add-padding {
+  padding-top: 10px;
+  text-align: center;
+}
+
+.active-hover:hover {
+  background-color: lightblue;
+}
+
+.page-content {
+  width: 80%;
+  margin-left: 10%;
+}
+
+.space-above-20 {
+  padding-top: 20px;
+}
+
+.space-above-10 {
+  padding-top: 10px;
+}
+
+.error-message-font {
+  color: rgb(255, 0, 0);
+  font-size: 85%;
+}
+
+.error-warning {
+  color: red;
+  font-size: 200%;
+}
+
+.col-align-right {
+  text-align: right;
+}

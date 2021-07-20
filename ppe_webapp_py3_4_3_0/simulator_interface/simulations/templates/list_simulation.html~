@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+
+{% extends "base_framework.html" %}
+
+<head>
+	<title>
+	</title>
+</head>
+
+<body>
+	<br><br>
+	{% block main_body_content %}
+		<form action="/new-simulation/" method="post">
+		<table>
+		{% for sim_item in simulation_collection %}
+			<tr style="padding:15px">
+				<td style="text-align:left; padding:25px"> {{ forloop.counter }}. </td>
+				<td><b>Title</b>: {{ sim_item.sim_title }} <br>
+				<b>Description</b>: {{ sim_item.sim_descrip }} <br>
+				<input type="submit" name="choose_sim_{{ sim_item.id }}" value="Load simulation"
+				</td>
+			</tr>
+		{% empty %}
+			<p>There are no simulations to load. Use the Create Simulation link above to
+			get started.</p>
+		{% endfor %}
+		</table>
+		<input type="hidden" name="sim_state" value="{{ 1 }}">
+		{% csrf_token %}
+		</form>
+	{% endblock %}
+</body>

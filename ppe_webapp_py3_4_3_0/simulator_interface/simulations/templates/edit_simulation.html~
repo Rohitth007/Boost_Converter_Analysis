@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+
+{% extends "base_framework.html" %}
+
+<head>
+	<title>
+	</title>
+</head>
+
+<body>
+	<br><br>
+	{% block main_body_content %}
+		<form action="" method="post">
+		<p>This form sets the basic simulation parameters. Read the instructions below for
+		more information.</p>
+		{% if simulation_form.0 %}
+			<p style="font-size:150%; font-weight:bold">Simulation Parameters</p>
+			<table>
+				<tr style="padding:15px">
+					<td style="text-align:left; padding:5px; font-weight:bold">Simulation title: </td>
+					<td>{{ simulation_form.0.sim_title }}</td>
+				</tr>
+				<tr style="padding:15px">
+					<td style="text-align:left; padding:5px; font-weight:bold">Simulation description: </td>
+					<td>{{ simulation_form.0.sim_descrip }}</td>
+				</tr>
+				<tr style="padding:15px">
+					<td style="text-align:left; padding:5px; font-weight:bold">Time duration: </td>
+					<td>{{ simulation_form.0.sim_time_limit }}</td>
+				</tr>
+				<tr style="padding:15px">
+					<td style="text-align:left; padding:5px; font-weight:bold">Integration time step: </td>
+					<td>{{ simulation_form.0.sim_time_step }}</td>
+				</tr>
+				<tr style="padding:15px">
+					<td style="text-align:left; padding:5px; font-weight:bold">Time step of data storage: </td>
+					<td>{{ simulation_form.0.sim_time_data }}</td>
+				</tr>
+				<tr style="padding:15px">
+					<td style="text-align:left; padding:5px; font-weight:bold">Output data file: </td>
+					<td>{{ simulation_form.0.sim_output_file }}</td>
+				</tr>
+				<tr style="padding:15px">
+					<td style="text-align:left; padding:5px; font-weight:bold">Slice the output file?: </td>
+					<td>{{ simulation_form.0.sim_output_slice }}</td>
+				</tr>
+				<tr style="padding:15px">
+					<td style="text-align:left; padding:5px; font-weight:bold">Number of slices: </td>
+					<td>{{ simulation_form.0.sim_div_number }}</td>
+				</tr>
+				<tr style="padding:15px">
+					<td style="text-align:left; padding:5px; font-weight:bold">Directory with circuit files: </td>
+					<td>{{ simulation_form.0.sim_working_directory }}</td>
+				</tr>
+			</table>
+			<br>
+			<input type="submit" name="edit_sim_param" value="Edit Simulation Parameters">
+			<br> <br>
+			<input type="submit" name="main_page" value="Back to main page">
+		{% endif %}
+		
+		{% if simulation_form.1 %}
+			{% if simulation_form.1.errors %}
+				<p style="color:red; font-size:200%"> There are errors in the form! </p>
+			{% endif %}
+			<table>
+				{% for sim_item in simulation_form.1 %}
+					<tr>
+						<td>{{ sim_item.label }}</td>
+						<td>{{ sim_item }}
+						{% if sim_item.errors %}
+							{% for sim_errors in sim_item.errors %}
+								<font color="red"> {{ sim_errors }} </font>
+							{% endfor %}
+						{% endif %}</td>
+					</tr>
+				{% endfor %}
+			</table>
+			<br>
+			<input type="submit" name="save_sim_param" value="Save Simulation Parameters">
+			<br> <br>
+			<input type="submit" name="main_page" value="Back to main page">
+			Click here to continue.
+		{% endif %}
+		
+
+		<input type="hidden" name="sim_id" value="{{ sim_id }}">
+		<input type="hidden" name="sim_state" value="{{ sim_state }}">
+		{% csrf_token %}
+		</form>
+		<h1>Instructions</h1>
+		<ol>
+		<li>Title does not have to be unique. But limited to 100 characters</li>
+		<li>Description is not necessary but is recommended to document the simulation.</li>
+		<li>Time limit is in seconds.</li>
+		<li>Integration time step is extremely important as it affects the numerical stability
+		of the simulation. Choose a value as small as possible. Very small values however can
+		slow down the simulation. For typical power electronic circuits with converters
+		switching at 5 kHz, 1 microsecond will do. For high frequency converters, reduce
+		this to nanoseconds.</li>
+		<li>Data storage time step is how often you want to store data to the output file.
+		This affects the resolution of the plotted waveforms. The number has to be greater
+		than or equal to the integration time step.</li>
+		<li>Output data file is the name of the output file to which all waveform data
+		will be written. Suggested types are .dat or .txt files.</li>
+		<li>Whether to slice the output file is up to you. This is particularly useful
+		when you also want to plot the waveforms independently using a plotting software
+		such as Gnuplot. When output files are sliced, you can plot segments of waveforms
+		without excessive burden if the simulation data is huge.</li>
+		<li>If you do decide the slice the output file, the number of slices should be
+		greater than 1.</li>
+		<li>The directory with the circuit files will be the working directory of the
+		simulation case. Always maintain simulation cases in separate directories as this
+		avoids corruption of data and allows simulations to be executed independently. To
+		enter this value, choose a file (a circuit file or just copy some file into the
+		directory you choose) and right click on the file. Most operating systems, will
+		give you a list of options on right-clicking a file and one of the options is
+		"Properties". If you click "Properties", the path, location or directory will be
+		listed. Copy this path to the field above. NOTE: Make sure the directory can be
+		written to by the user. Do not choose a root or administrator directory for
+		safety reasons as the simulator will read and write data to this directory.</li>
+		<li>After saving the parameters, they will be listed for you. Check them and
+		click on "Back to main page" to continue.</li>
+		</ol>
+	{% endblock %}
+</body>

@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+
+{% extends "base_framework.html" %}
+
+<head>
+	<title>
+	</title>
+</head>
+
+<body>
+	<br><br>
+	{% block main_body_content %}
+		<form action="" method="post">
+		{% if ckt_error_list %}
+			<p>There are errors in the simulation circuit schematics.</p>
+			<ol>
+				{% for error_item in ckt_error_list %}
+					<li class="error-message-font">{{ error_item }}</li>
+				{% endfor %}
+			</ol>
+			<br>
+			<p>You need to go back to the "Add circuit files" section and change the spreadsheets
+			that cause the errors.</p>
+			<br><br>
+		{% else %}
+			<p>These are the circuit files in the simulation case. Read the instructions below.
+			</p> <br>
+			{% for ckt_item in ckt_schematics_update %}
+				<div class="row">
+					<div class="col-md-1">
+						{{ forloop.counter }}.
+					</div>
+					<div class="col-md-6">
+						<div class="row">
+							<div class="col-md-4 col-align-right">
+								File name:
+							</div>
+							<div class="col-md-8">
+								{{ ckt_item.ckt_file_name }}
+							</div>
+						</div>
+						<div class="row">
+							<div class="col-md-4 col-align-right">
+								File description:
+							</div>
+							<div class="col-md-8">
+								{{ ckt_item.ckt_file_descrip }}
+							</div>
+						</div>
+					</div>
+					<div class="col-md-3 col-align-right">
+						<a href="/edit-schematic-parameters/{{ sim_id }}/{{ ckt_item.id }}">
+							<button type="button"
+											class="btn btn-primary">View components</button></a>
+					</div>
+				</div>
+				<br><br>
+			{% endfor %}
+		{% endif %}
+
+		<a href="/browse-simulation/{{ sim_id }}/">
+				<button type="button"
+								class="btn btn-general">Back to main page</button></a>
+
+		{% csrf_token %}
+		</form>
+		<h1>Instructions</h1>
+		<ol>
+		<li>The files listed above are the files associated with the simulation.</li>
+		<li>Click on "View components" button below each file to view the components in that
+		circuit file and their parameters. For large simulation cases with several files and
+		components, it may take a few second or up to a minute to display the components
+		as they are being extracted from the database. Do not click on the back button or
+		refresh.</li>
+		<li>If this is a brand new simulation, the components will have default parameters.</li>
+		<li>Whether it is a new simulation or an existing simulation being executed, it is
+		recommended to check the parameters of all components.</li>
+		<li>After entering new data or checking old data, click on "Back to main page"
+		button to continue.</li>
+		</ol>
+		<br><br>
+	{% endblock %}
+</body>
